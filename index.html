@@ -32,7 +32,7 @@
     color: var(--white);
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
-    cursor: none; /* Custom Cursor */
+    cursor: none;
   }
 
   /* ─── CUSTOM CURSOR ─── */
@@ -510,7 +510,7 @@
 <section id="about">
   <div class="about-grid">
     <div class="photo-frame reveal">
-      <img src="mid-shot portrait.jpg" alt="Khaled Habib Profile">
+      <img src="Firefly_Gemini Flash_Dramatic mid-shot portrait, minimalist chiaroscuro studio aesthetic. Subject seated,  43826.png" alt="Khaled Habib Profile">
       <div class="info-badge">⚡ Available for Hire</div>
     </div>
     
@@ -797,16 +797,13 @@ document.querySelectorAll('a, button, .project-card, .service-card').forEach(el 
 const canvas = document.getElementById('bg-canvas');
 const scene = new THREE.Scene();
 
-// Camera setup
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 30;
 
-// Renderer setup
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Abstract Geometries representing "Design Thoughts"
 const objects = [];
 const geometries = [
   new THREE.IcosahedronGeometry(1, 0),
@@ -817,7 +814,6 @@ const geometries = [
 
 const colors = [0xff2d78, 0x00f5ff, 0xffe600, 0xbf00ff];
 
-// Create floating wireframe objects
 for(let i=0; i<40; i++) {
   const geo = geometries[Math.floor(Math.random() * geometries.length)];
   const mat = new THREE.MeshBasicMaterial({ 
@@ -829,16 +825,13 @@ for(let i=0; i<40; i++) {
   
   const mesh = new THREE.Mesh(geo, mat);
   
-  // Random positioning in a wide space
   mesh.position.x = (Math.random() - 0.5) * 60;
   mesh.position.y = (Math.random() - 0.5) * 60;
   mesh.position.z = (Math.random() - 0.5) * 40 - 10;
   
-  // Random rotations
   mesh.rotation.x = Math.random() * Math.PI;
   mesh.rotation.y = Math.random() * Math.PI;
   
-  // Custom properties for animation
   mesh.userData = {
     rx: (Math.random() - 0.5) * 0.01,
     ry: (Math.random() - 0.5) * 0.01,
@@ -850,23 +843,20 @@ for(let i=0; i<40; i++) {
   objects.push(mesh);
 }
 
-// Particle system for "Stars/Pixels"
 const particlesGeo = new THREE.BufferGeometry();
 const particlesCount = 700;
 const posArray = new Float32Array(particlesCount * 3);
 const colorsArray = new Float32Array(particlesCount * 3);
 
 for(let i=0; i < particlesCount * 3; i+=3) {
-  // Positions
   posArray[i] = (Math.random() - 0.5) * 100;
   posArray[i+1] = (Math.random() - 0.5) * 100;
   posArray[i+2] = (Math.random() - 0.5) * 100;
   
-  // Colors (mix of white and neon cyan)
   const isCyan = Math.random() > 0.8;
-  colorsArray[i] = isCyan ? 0 : 1; // R
-  colorsArray[i+1] = isCyan ? 0.96 : 1; // G
-  colorsArray[i+2] = 1; // B
+  colorsArray[i] = isCyan ? 0 : 1;
+  colorsArray[i+1] = isCyan ? 0.96 : 1;
+  colorsArray[i+2] = 1;
 }
 
 particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
@@ -881,7 +871,6 @@ const particlesMat = new THREE.PointsMaterial({
 const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
 scene.add(particlesMesh);
 
-// Mouse interaction for parallax
 let targetX = 0;
 let targetY = 0;
 const windowHalfX = window.innerWidth / 2;
@@ -892,40 +881,32 @@ document.addEventListener('mousemove', (event) => {
   targetY = (event.clientY - windowHalfY) * 0.001;
 });
 
-// Scroll interaction
 let scrollY = window.scrollY;
 window.addEventListener('scroll', () => { scrollY = window.scrollY; });
 
-// Resize handling
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Animation Loop
 const clock = new THREE.Clock();
 
 function animate3D() {
   requestAnimationFrame(animate3D);
   const elapsedTime = clock.getElapsedTime();
 
-  // Smooth mouse parallax movement
   camera.position.x += (targetX * 10 - camera.position.x) * 0.05;
   camera.position.y += (-targetY * 10 - camera.position.y) * 0.05;
   
-  // Camera scroll movement
-  scene.position.y = scrollY * 0.02; // Move entire scene up when scrolling down
+  scene.position.y = scrollY * 0.02;
   
-  // Rotate objects
   objects.forEach(obj => {
     obj.rotation.x += obj.userData.rx;
     obj.rotation.y += obj.userData.ry;
-    // Add floating effect
     obj.position.y = obj.userData.baseY + Math.sin(elapsedTime * 2 + obj.position.x) * 0.5;
   });
 
-  // Slowly rotate particle system
   particlesMesh.rotation.y = elapsedTime * 0.05;
   particlesMesh.rotation.x = elapsedTime * 0.02;
 
@@ -933,14 +914,13 @@ function animate3D() {
 }
 animate3D();
 
-// ══ SCROLL REVEAL (Intersection Observer) ══
+// ══ SCROLL REVEAL ══
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { 
     if(e.isIntersecting) { 
       e.target.classList.add('visible'); 
       
-      // Animate skill bars if they exist inside this element
       if(e.target.classList.contains('skill-item')) {
         const pct = e.target.getAttribute('data-skill');
         const fill = e.target.querySelector('.skill-fill');
